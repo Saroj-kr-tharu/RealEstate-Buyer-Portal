@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiHome, FiMapPin, FiSearch, FiTrendingUp } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import ItemCard from "../../components/itemCard/ItemCard";
 import Layout from "../../layout/Layout";
+import { PropertyGetAll } from "../../redux/Slices/propertySlice";
+ 
 
 const properties = [
   {
@@ -92,12 +95,20 @@ const stats = [
 
 function Homepage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
+  const propertiesList = useSelector((state) => state.property.PropertyList);
+
+  function loadProperty(){
+      dispatch(PropertyGetAll()); 
+    }
+
+    useEffect( ()=> { loadProperty() }, [] )
 
   const handleView = (item) => {
     alert(`Viewing: ${item.title}`);
   };
 
-  const filtered = properties.filter(
+  const filtered = propertiesList.filter(
     (p) =>
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.location.toLowerCase().includes(searchQuery.toLowerCase())

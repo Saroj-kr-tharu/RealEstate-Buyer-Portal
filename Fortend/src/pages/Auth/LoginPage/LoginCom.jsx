@@ -1,8 +1,10 @@
 
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "../../../layout/Layout";
+import { login } from "../../../redux/Slices/AuthSlice";
 
 
 
@@ -11,8 +13,8 @@ function LoginCom() {
     email: "",
     password: "",
   });
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
    const [showPassword, setShowPassword] = useState(false);
 
   // reset form 
@@ -42,12 +44,12 @@ function LoginCom() {
     // console.log(formData);
     // reset form 
 
-      // resetForm();
-      // const response = await dispatch(login(formData));
-    //  if(response?.payload?.data){
-    //         navigate('/');
-    //         resetForm();
-    //     }
+      resetForm();
+      const response = await dispatch(login(formData));
+     if(response?.payload?.data){
+            navigate('/buyerDashboard');
+            resetForm();
+        }
   };
 
   return ( 

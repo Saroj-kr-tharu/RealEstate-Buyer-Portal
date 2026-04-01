@@ -5,42 +5,43 @@ import axiosIntance from '../../Config/axiosInstance';
 
 
 const initialState= {
-    BookingList: []
+    PropertyList: []
+
 };
 
-export const BookingIntial = createAsyncThunk('Booking/getall', async(data) => {
+export const PropertyGetAll = createAsyncThunk('Property/getall', async() => {
         try {
-            console.log('booking data slice => ', data)
-            const response = axiosIntance.post('/booking/FinalIntial', data);
+            
+            const response = axiosIntance.get('/property');
             toast.promise(response, {
-                loading: 'Booking Intializing...',
-                success: 'Sucessfully Booked',
-                error: 'Something went wrong '
+                loading: 'Loading Property...',
+                success: 'Sucessfully Loaded Property',
+                error: 'Failed to Load Property '
             }) 
             const result = await response;
             return result;
           
         } catch (error) {
             console.log(error);
-            toast.error(error?.response?.data?.err || error?.response?.data?.message || 'Booking  Failed');
+            toast.error(error?.response?.data?.err || error?.response?.data?.message || ' Failed');
            
         }
 })
 
-export const FindDataByBookingId = createAsyncThunk('Booking/getById', async(data) => {
+export const PropertyGetById = createAsyncThunk('Property/getById', async(data) => {
         try {
-            const response = axiosIntance.get(`/booking/findByIDFinalComplete?id=${data}`);
+            const response = axiosIntance.get(`/property/${data}`);
             toast.promise(response, {
-                loading: 'Getting Booking Data Intializing...',
-                success: 'Sucessfully Get  Book Data ',
-                error: 'Something went wrong '
+                loading: 'Loading Property...',
+                success: 'Sucessfully Loaded Property',
+                error: 'Failed to Load Property '
             }) 
             const result = await response;
             return result;
           
         } catch (error) {
             console.log(error);
-            toast.error(error?.response?.data?.err || error?.response?.data?.message || 'Getting Boking Data  Failed');
+            toast.error(error?.response?.data?.err || error?.response?.data?.message || '  Failed');
            
         }
 })
@@ -49,36 +50,27 @@ export const FindDataByBookingId = createAsyncThunk('Booking/getById', async(dat
 
 
 const BookingSlice = createSlice({
-    name: 'BookingSlicer',
+    name: 'PropertySlicer',
      initialState,
     extraReducers: (builder) => { 
             builder
-            .addCase(BookingIntial.fulfilled, (state,action) => {
+            .addCase(PropertyGetAll.fulfilled, (state,action) => {
                 if(action?.payload?.data){
                     const data = action?.payload?.data?.data; 
+                    state.PropertyList = data;
+                    console.log("data => ", data )
                     
-                    
-                     if(action.meta.arg.gateway === 'khalti'){
-                      
-                        window.open(data?.data?.payment_url, '_blank');
-                    }
-                    else if(action.meta.arg.gateway === 'stripe'){
-                    
-                        window.open(data?.data, '_blank');
-
-                    }
+                     
                 }
             })
 
 
-            // .addCase(FindDataByBookingId.fulfilled, (state,action) => {
-            //     if(action?.payload?.data){
-            //         const data = action?.payload?.data?.data; 
-                    
-            //         state.BookingList = data;
-                   
-            //     }
-            // })
+            .addCase(PropertyGetById.fulfilled, (state,action) => {
+                if(action?.payload?.data){
+                    const data = action?.payload?.data?.data; 
+                    console.log("data => ", data)
+                }
+            })
             
 
         }

@@ -1,12 +1,14 @@
 
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "../../../layout/Layout";
+import { register } from "../../../redux/Slices/AuthSlice";
 
 function RegisterCom() { 
-    // const dispatch = useDispatch();
-    // const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [password, setpassword] = useState();
     const [confirmPassword, confirmSetpassword] = useState();
 
@@ -60,11 +62,11 @@ function RegisterCom() {
             
         }
         // console.log(formData)
-        // const response= await dispatch(register(finalData));
-        // if(response?.payload?.data){
-        //     navigate('/login');
-        //     restForm();
-        // }
+        const response= await dispatch(register(finalData));
+        if(response?.payload?.data){
+            navigate('/login');
+            restForm();
+        }
     };
 
     return(
