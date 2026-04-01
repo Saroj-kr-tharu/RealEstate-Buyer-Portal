@@ -1,171 +1,213 @@
 <div align="center">
 
-# 🔐 Auth Microservice
+# 🏠 Real Estate E-Commerce Backend
 
-**Enterprise-Grade Authentication Service**
+**A Production-Ready RESTful API for Real Estate Listings**
 
-[![Service](https://img.shields.io/badge/Service-Authentication-blue?style=flat-square)](https://github.com)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-5.x-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B-336791?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Sequelize](https://img.shields.io/badge/Sequelize-6.x-52B0E7?style=flat-square&logo=sequelize&logoColor=white)](https://sequelize.org/)
+[![Zod](https://img.shields.io/badge/Zod-4.x-3E67B1?style=flat-square)](https://zod.dev/)
 [![JWT](https://img.shields.io/badge/JWT-Auth-FF6B35?style=flat-square)](https://jwt.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com/)
 
-**Secure** • **Fast** • **Scalable** • **Production-Ready**
+**Secure** • **Scalable** • **Well-Structured** • **Production-Ready**
 
-*Secure JWT-based authentication with role-based access control, password encryption, and async email integration.*
+*Role-based real estate platform where Agents list properties and Buyers manage favourites — built with clean MVC architecture, Zod validation, and centralized error handling.*
 
 </div>
+
+---
 
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
-- [Features](#-features)
-- [Architecture](#-architecture)
+- [Key Highlights](#-key-highlights)
+- [Tech Stack](#-tech-stack)
+- [Architecture & Design Patterns](#-architecture--design-patterns)
 - [Project Structure](#-project-structure)
-- [Quick Start](#-quick-start)
-- [API Endpoints](#-api-endpoints)
+- [Getting Started](#-getting-started)
+- [Environment Variables](#-environment-variables)
+- [API Reference](#-api-reference)
+- [Request Validation (Zod)](#-request-validation-zod)
+- [Error Handling](#-error-handling)
+- [Response Handler](#-response-handler)
+- [Async Handler](#-async-handler)
 - [Database Schema](#-database-schema)
-- [Security](#-security)
 - [Docker Deployment](#-docker-deployment)
-- [Development](#-development)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
 - [License](#-license)
 
 ---
 
 ## 📖 Overview
 
-The **Auth Microservice** is a robust, scalable authentication and authorization service built for the Power11 Fantasy Sports Platform. It handles all identity management operations including user registration, secure login, JWT token lifecycle management, and role-based access control.
+A full-featured **Real Estate E-Commerce** backend API that supports two user roles:
 
-**Core Responsibilities:**
-- User account management and registration
-- Secure authentication and session management
-- JWT token issuance and validation
-- Role-based access control (RBAC)
-- Async event publishing for email notifications
-- Service-to-service authentication
+| Role | Capabilities |
+|:-----|:-------------|
+| **Agent** | Create, update, delete, and manage property listings |
+| **Buyer** | Browse all properties, favourite/unfavourite listings |
+
+The API provides JWT-based authentication with access & refresh token rotation, Zod schema validation on every request, and a layered architecture that cleanly separates concerns across controllers, services, and repositories.
 
 ---
 
-## ✨ Features
+## ✨ Key Highlights
 
 | Feature | Description |
 |:--------|:------------|
-| 🔑 **JWT Authentication** | Access tokens (15m) & refresh tokens (7d) with secure rotation |
-| 👤 **User Management** | Registration, profile management, and account updates |
-| 🔒 **Password Security** | Industry-standard bcrypt hashing (12+ rounds) |
-| 👑 **Role-Based Access** | Fine-grained authorization (Admin, User roles) |
-| 📧 **Async Email** | Event-driven email notifications via RabbitMQ |
-| 🔄 **Token Refresh** | Seamless token renewal with rotating refresh tokens |
-| 🔗 **Service Auth** | Secure microservice-to-microservice communication |
-| 🍪 **HTTP-Only Cookies** | Secure refresh token storage preventing XSS attacks |
-| 🗄️ **Database Migrations** | Version-controlled schema management with Sequelize |
+| 🛡️ **Zod Request Validation** | Schema-based validation middleware for body & params using [Zod](https://zod.dev/) |
+| ⚠️ **Custom Error Classes** | `AppError` and `ServiceError` for structured, predictable error propagation |
+| 🌐 **Global Error Middleware** | Centralized error handler catches all errors — custom, Sequelize, and unknown |
+| 📦 **Response Handler** | Uniform `{ success, message, data }` response format across every endpoint |
+| 🔄 **Async Handler** | Promise-based wrapper that forwards rejected promises to the error middleware |
+| 🏗️ **MVC + Repository Pattern** | Clean separation: Routes → Controllers → Services → Repositories → Database |
+| 🔑 **JWT Authentication** | Access tokens (10m) & refresh tokens (7d) with HttpOnly cookie storage |
+| 🔒 **Bcrypt Password Hashing** | Industry-standard one-way hashing with configurable salt rounds |
+| 👑 **Role-Based Access Control** | Fine-grained authorization — Agents manage listings, Buyers manage favourites |
+| 🐳 **Docker Support** | Production-ready Dockerfile included |
 
 ---
 
-## 🏗️ Architecture
+## 🛠️ Tech Stack
 
-**Layered Architecture with Clear Separation of Concerns**
+| Layer | Technology |
+|:------|:-----------|
+| **Runtime** | Node.js 18+ |
+| **Framework** | Express 5.x |
+| **Database** | PostgreSQL 15+ |
+| **ORM** | Sequelize 6.x |
+| **Validation** | Zod 4.x |
+| **Authentication** | JSON Web Tokens (jsonwebtoken) |
+| **Password Hashing** | bcrypt |
+| **Containerization** | Docker (Alpine) |
+
+---
+
+## 🏗️ Architecture & Design Patterns
 
 ```
-                              ┌──────────────────────┐
-                              │   🌐 API Gateway     │
-                              │      (Port 3000)     │
-                              └──────────┬───────────┘
-                                         │
-                                         ▼
-    ┌────────────────────────────────────────────────────────────┐
-    │          🔐 AUTH MICROSERVICE (Port 3001)                   │
-    │                                                              │
-    │  ┌──────────┐  ┌─────────────┐  ┌──────────────┐           │
-    │  │  Routes  │─▶│ Controllers │─▶│  Services    │           │
-    │  └──────────┘  └─────────────┘  └──────┬───────┘           │
-    │                                         │                   │
-    │                    ┌────────────────────┴────────┐          │
-    │                    │   Repository Layer         │          │
-    │                    └────────────────────┬────────┘          │
-    │                                         │                   │
-    └─────────────────────────────────────────┼───────────────────┘
-                                              │
-          ┌───────────────────────────────────┼──────────────────┐
-          ▼                                   ▼                  ▼
-    ┌──────────────────┐          ┌──────────────────┐    ┌─────────────┐
-    │ 🗄️  PostgreSQL   │          │ 🐰 RabbitMQ      │    │ 🔐 JWT/RBAC │
-    │   • Users        │          │ • Email Events   │    │             │
-    │   • Roles        │          │ • Notifications  │    │ • Access    │
-    │   • Sessions     │          │                  │    │ • Refresh   │
-    └──────────────────┘          └──────────────────┘    └─────────────┘
+  Client Request
+       │
+       ▼
+┌─────────────┐
+│   Routes    │  ── Define endpoints & attach middleware
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Middlewares │  ── Zod validation, token checks, error handling
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│ Controllers │  ── Handle HTTP req/res, delegate to services
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Services   │  ── Business logic, authorization, orchestration
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│Repositories │  ── Data access layer (Sequelize queries)
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Database   │  ── PostgreSQL
+└─────────────┘
 ```
 
-**Key Design Patterns:**
-- **MVC Architecture** - Clear separation between routes, controllers, and services
-- **Repository Pattern** - Abstracted data access layer
-- **Service Layer** - Business logic isolation
-- **Dependency Injection** - Loose coupling between components
-- **Middleware Pipeline** - Composable request processing
+**Design Patterns Used:**
+
+- **MVC (Model-View-Controller)** — Routes act as the entry layer, Controllers handle request/response, Services contain business logic, Models define data structure.
+- **Repository Pattern** — All database queries are abstracted into repository classes (`curd.repo.js`, `user.repo.js`, `property.repo.js`, `favorite.repo.js`), keeping services database-agnostic.
+- **Service Layer Pattern** — Business rules live in service classes that inherit from a generic `CurdService` base class.
+- **Middleware Pipeline** — Composable request processing: validation → authentication → controller.
+- **Centralized Error Handling** — All errors flow through a single global error middleware.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-02_Auth_microservice/
-├── 📄 dockerfile              # Docker container configuration
-├── 📄 package.json            # Node.js dependencies and scripts
-├── 📄 .env.example            # Environment variables template
-├── 📄 README.md               # This documentation
+backend/
+├── dockerfile                    # Docker container configuration
+├── package.json                  # Dependencies & scripts
+├── README.md
 │
-└── 📁 src/
-    ├── 📄 index.js            # Application entry point
+└── src/
+    ├── index.js                  # App entry point — Express setup & server start
     │
-    ├── 📁 config/
-    │   ├── 📄 config.json             # Database config (dev/prod)
-    │   ├── 📄 docker-config.json      # Docker database config
-    │   └── 📄 server.config.js        # Server configuration
+    ├── config/
+    │   ├── config.json           # Sequelize DB config (dev / test / prod)
+    │   └── server.config.js      # Environment variables loader
     │
-    ├── 📁 controllers/
-    │   ├── 📄 index.js                # Controller exports
-    │   └── 📄 auth.controller.js      # Auth endpoints handler
+    ├── controllers/
+    │   ├── index.js              # Barrel export
+    │   ├── auth.controller.js    # Signup, login, token verify, refresh, logout
+    │   ├── property.controller.js# CRUD for property listings
+    │   └── buyer.controller.js   # Favourite / unfavourite properties
     │
-    ├── 📁 middlewares/
-    │   ├── 📄 index.js                        # Middleware exports
-    │   ├── 📄 user.middleware.js              # User auth middleware
-    │   └── 📄 internal.service.middleware.js  # Service-to-service auth
+    ├── middlewares/
+    │   ├── index.js              # Barrel export
+    │   ├── user.middleware.js    # Zod validation for auth + token checks
+    │   ├── property.middleware.js# Zod validation for property operations
+    │   └── error.middleware.js   # Global error handler
     │
-    ├── 📁 migrations/
-    │   └── 📄 20251117070636-create-user.js   # User table schema
+    ├── models/
+    │   ├── index.js              # Sequelize initialization & model loader
+    │   ├── user.js               # User model (UUID, roles, refresh token)
+    │   ├── property.js           # Property model (title, price, location)
+    │   └── favourite.js          # Favourite model (join table: User ↔ Property)
     │
-    ├── 📁 models/
-    │   ├── 📄 index.js                # Sequelize initialization
-    │   └── 📄 user.js                 # User model definition
+    ├── repository/
+    │   ├── curd.repo.js          # Generic CRUD repository (base class)
+    │   ├── user.repo.js          # User-specific queries
+    │   ├── property.repo.js      # Property-specific queries
+    │   └── favorite.repo.js      # Favourite-specific queries
     │
-    ├── 📁 repository/
-    │   ├── 📄 curd.repo.js            # Generic CRUD operations
-    │   └── 📄 user.repo.js            # User-specific queries
+    ├── Routes/
+    │   ├── index.js              # Mounts /api/v1 prefix
+    │   └── routes/index.js       # All route definitions
     │
-    ├── 📁 services/
-    │   ├── 📄 index.js                # Service exports
-    │   ├── 📄 user.service.js         # User business logic
-    │   ├── 📄 curdService.js          # Generic CRUD service
-    │   └── 📄 queue.service.js        # RabbitMQ integration
+    ├── schemas/
+    │   ├── user.schema.js        # Zod schemas: SignupSchema, LoginSchema
+    │   └── property.schema.js    # Zod schemas: AddProperty, UpdateProperty, PropertyId
     │
-    ├── 📁 Routes/
-    │   ├── 📄 index.js                # Main route handler
-    │   └── 📄 routes/index.js         # Route definitions
+    ├── services/
+    │   ├── index.js              # Barrel export
+    │   ├── curdService.js        # Generic CRUD service (base class)
+    │   ├── user.service.js       # Auth business logic
+    │   ├── property.service.js   # Property business logic
+    │   └── favorite.service.js   # Favourite business logic
     │
-    └── 📁 utlis/
-        ├── 📄 index.js                # Utility exports
-        ├── 📄 bcryptHelper.js         # Password hashing utils
-        ├── 📄 jwtHelper.js            # JWT token utils
-        ├── 📄 messageQueue.js         # RabbitMQ utils
-        └── 📁 Errors/
-            └── 📄 https_codes.js      # HTTP status codes
+    ├── seeders/
+    │   └── 20260118170821-users.js
+    │
+    ├── migrations/
+    │   ├── 20251117070636-create-user.js
+    │   ├── 20260401073142-create-property.js
+    │   └── 20260401073824-create-favourite.js
+    │
+    └── utlis/
+        ├── index.js              # Barrel export for all utilities
+        ├── async.handler.js      # Async wrapper — catches rejected promises
+        ├── response.handler.js   # Uniform success/error response builder
+        ├── https.codes.js        # HTTP status code constants
+        ├── jwt.helper.js         # JWT create & verify helpers
+        ├── bcrypt.helper.js      # Password comparison helper
+        └── Errors/
+            ├── AppErrors.js      # AppError class
+            └── ServiceError.js   # ServiceError class
 ```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -173,506 +215,503 @@ The **Auth Microservice** is a robust, scalable authentication and authorization
 |:-----------|:---------|
 | **Node.js** | v18.x or higher |
 | **PostgreSQL** | v15.x or higher |
-| **RabbitMQ** | v3.x or higher |
 | **npm** | v9.x or higher |
-| **Git** | Latest |
 
-### 📥 Installation Steps
+### Installation
 
 ```bash
-# 1️⃣ Clone and navigate to the service
-cd 02_Auth_microservice
+# 1. Clone the repository
+git clone <repo-url>
+cd backend
 
-# 2️⃣ Install dependencies
+# 2. Install dependencies
 npm install
 
-# 3️⃣ Create environment configuration
-cp .env.example .env
+# 3. Create a .env file (see Environment Variables section below)
 
-# 4️⃣ Configure your environment variables in .env
-# Update: PORT, JWT_KEYS, DATABASE_URL, RABBITMQ_URL, EMAIL settings
+# 4. Create the PostgreSQL database
+createdb RealStateDB
 
-# 5️⃣ Run database migrations
+# 5. Run migrations
 npx sequelize-cli db:migrate
 
-# 6️⃣ Start the development server
+# 6. (Optional) Seed the database
+npx sequelize-cli db:seed:all
+
+# 7. Start the development server
 npm start
 ```
 
-The service will be available at `http://localhost:3001`
+The server will start at `http://localhost:<PORT>`.
 
-### ⚙️ Environment Configuration
+---
 
-Create `.env` file in the project root:
+## ⚙️ Environment Variables
+
+Create a `.env` file in the project root:
 
 ```env
-# ═════════════════════════════════════════════════════════════
-# SERVER CONFIGURATION
-# ═════════════════════════════════════════════════════════════
-PORT=3001
-NODE_ENV=development
+# Server
+PORT=3000
 
-# ═════════════════════════════════════════════════════════════
-# JWT CONFIGURATION (Generate strong random keys)
-# ═════════════════════════════════════════════════════════════
-PRIVATEJWT=your_super_secret_jwt_access_key_min_32_chars
-PRIVATEJWTRefersh=your_super_secret_jwt_refresh_key_min_32_chars
-JWT_ACCESS_EXPIRY=900        # 15 minutes in seconds
-JWT_REFRESH_EXPIRY=604800    # 7 days in seconds
+# JWT Secrets (use strong random strings)
+PRIVATEJWT=your_access_token_secret_min_32_chars
+PRIVATEJWTRefersh=your_refresh_token_secret_min_32_chars
 
-# ═════════════════════════════════════════════════════════════
-# DATABASE CONFIGURATION
-# ═════════════════════════════════════════════════════════════
-DB_HOST=localhost
+# PostgreSQL (also configure src/config/config.json)
+DB_HOST=127.0.0.1
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=your_password
-DB_NAME=power11_auth
-DB_DIALECT=postgres
-
-# ═════════════════════════════════════════════════════════════
-# MICROSERVICE COMMUNICATION
-# ═════════════════════════════════════════════════════════════
-INTERNAL_SERVER_TOKEN=your_internal_service_token_for_api_calls
-PAYMENT_BACKEND_URL=http://localhost:3006
-PAYMENT_SERVICE_API_KEY=your_payment_service_key
-FRONTEND_SUCCESS_URL=http://localhost:5173/success
-
-# ═════════════════════════════════════════════════════════════
-# EMAIL CONFIGURATION (For async notifications)
-# ═════════════════════════════════════════════════════════════
-EMAIL_ID=your-email@gmail.com
-EMAIL_PASS=your-app-specific-password
-EMAIL_SERVICE=gmail
-EMAIL_FROM_NAME=Power11
-
-# ═════════════════════════════════════════════════════════════
-# RABBITMQ CONFIGURATION (Message broker)
-# ═════════════════════════════════════════════════════════════
-MESSAGE_BROKER_URL=amqp://localhost:5672
-RABBITMQ_USER=guest
-RABBITMQ_PASS=guest
-CHANNEL_NAME=AUTH_CHANNEL
-EXCHANGE_NAME=AUTH_MICROSERVICE
-REMINDER_BINDING_KEY=REMINDER_AUTH_SERVICE
-
-# ═════════════════════════════════════════════════════════════
-# LOGGING & DEBUGGING
-# ═════════════════════════════════════════════════════════════
-LOG_LEVEL=debug
-DEBUG=auth:*
+DB_NAME=RealStateDB
 ```
 
-### 🗄️ Database Setup
 
-Update `src/config/config.json` with your database credentials:
 
-```json
-{
-  "development": {
-    "username": "postgres",
-    "password": "your_password",
-    "database": "power11_auth",
-    "host": "127.0.0.1",
-    "port": 5432,
-    "dialect": "postgres",
-    "logging": true
-  },
-  "production": {
-    "username": "prod_user",
-    "password": "secure_production_password",
-    "database": "power11_auth_prod",
-    "host": "your-prod-db-host",
-    "port": 5432,
-    "dialect": "postgres",
-    "logging": false,
-    "pool": {
-      "max": 10,
-      "min": 5,
-      "acquire": 30000,
-      "idle": 10000
-    }
-  }
-}
-```
+---
 
-## 📡 API Endpoints
+## 📡 API Reference
 
-### Authentication Routes
+All routes are prefixed with `/api/v1`.
 
-| HTTP | Endpoint | Description | Auth | Rate Limit |
-|:----:|:---------|:------------|:----:|:----------:|
-| `POST` | `/api/v1/auth/register` | Register new user | ❌ | 5/min |
-| `POST` | `/api/v1/auth/login` | User login with credentials | ❌ | 10/min |
-| `POST` | `/api/v1/auth/refresh` | Refresh access token | 🔄 | 20/min |
-| `POST` | `/api/v1/auth/logout` | User logout and token revocation | ✅ | 20/min |
-| `GET` | `/api/v1/auth/profile` | Retrieve user profile | ✅ | 60/min |
-| `PATCH` | `/api/v1/auth/profile` | Update user profile | ✅ | 30/min |
-| `POST` | `/api/v1/auth/verify-email` | Verify email address | 🔄 | 5/min |
-| `POST` | `/api/v1/auth/forgot-password` | Request password reset | ❌ | 3/min |
+### Health Check
 
-**Legend:** ❌ = No auth required | ✅ = JWT required | 🔄 = Refresh token required
+| Method | Endpoint | Description |
+|:------:|:---------|:------------|
+| `GET` | `/api/v1/check` | Server health check |
 
-### Request/Response Examples
+### Authentication
 
-#### Register User
+| Method | Endpoint | Middleware | Description |
+|:------:|:---------|:-----------|:------------|
+| `POST` | `/api/v1/signup` | Zod `SignupSchema` | Register a new user |
+| `POST` | `/api/v1/login` | Zod `LoginSchema` | Login & receive JWT tokens |
+| `GET` | `/api/v1/veriyToken` | Token presence check | Verify an access token |
+| `POST` | `/api/v1/refresh-token` | Refresh token check | Rotate access & refresh tokens |
+| `POST` | `/api/v1/logout` | — | Clear refresh token & logout |
+
+### Properties (Agent Role)
+
+| Method | Endpoint | Middleware | Description |
+|:------:|:---------|:-----------|:------------|
+| `POST` | `/api/v1/property` | Zod `AddPropertySchema` | Create a new property listing |
+| `PATCH` | `/api/v1/property/:id` | Zod `UpdatePropertySchema` + `PropertyIdSchema` | Update a property |
+| `DELETE` | `/api/v1/property/:id` | ID presence check | Delete a property |
+| `GET` | `/api/v1/propertyAgent` | — | Get all properties by the logged-in agent |
+
+### Properties (Public)
+
+| Method | Endpoint | Description |
+|:------:|:---------|:------------|
+| `GET` | `/api/v1/property` | Get all property listings |
+| `GET` | `/api/v1/property/:id` | Get a single property by ID |
+
+### Favourites (Buyer Role)
+
+| Method | Endpoint | Middleware | Description |
+|:------:|:---------|:-----------|:------------|
+| `POST` | `/api/v1/favorite/:id` | ID presence check | Add a property to favourites |
+| `DELETE` | `/api/v1/favorite/:id` | ID presence check | Remove a property from favourites |
+| `GET` | `/api/v1/favorite` | — | Get all favourited properties |
+
+### Request / Response Examples
 
 <details>
-<summary><b>📥 POST /api/v1/auth/register</b></summary>
+<summary><b>POST /api/v1/signup</b></summary>
 
 **Request:**
-```http
-POST /api/v1/auth/register
-Content-Type: application/json
-
+```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "SecurePass123!"
+  "email": "agent@example.com",
+  "password": "Secure@123",
+  "role": "AGENT"
 }
 ```
 
-**Success Response (201 Created):**
+**Success Response (200):**
 ```json
 {
   "success": true,
-  "message": "User registered successfully",
+  "message": "Successfully Signup",
   "data": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "role": "user",
-    "createdAt": "2026-01-07T10:00:00.000Z"
+    "id": "b2f7c9a1-...",
+    "email": "agent@example.com",
+    "role": "AGENT"
   }
 }
 ```
 
-**Error Response (400 Bad Request):**
+**Validation Error (400):**
 ```json
 {
   "success": false,
-  "message": "Validation failed",
-  "errors": {
-    "email": "Email already exists"
+  "message": "password: Must contain at least one uppercase letter",
+  "data": {}
+}
+```
+</details>
+
+<details>
+<summary><b>POST /api/v1/login</b></summary>
+
+**Request:**
+```json
+{
+  "email": "agent@example.com",
+  "password": "Secure@123"
+}
+```
+
+**Success Response (200):**
+```json
+{
+  "success": true,
+  "message": "Successfully Login",
+  "data": {
+    "email": "agent@example.com",
+    "id": "b2f7c9a1-...",
+    "role": "AGENT",
+    "username": null,
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "isActive": false
+  }
+}
+```
+
+**Headers set:**
+```
+Set-Cookie: refreshToken=eyJ...; HttpOnly; Secure; SameSite=Strict; Max-Age=604800
+```
+</details>
+
+<details>
+<summary><b>POST /api/v1/property</b></summary>
+
+**Headers:**
+```
+x-access-token: <JWT access token>
+```
+
+**Request:**
+```json
+{
+  "title": "Luxury Villa in Miami",
+  "description": "5 bed, 4 bath waterfront property",
+  "price": 1250000,
+  "location": "Miami, FL",
+  "imageUrl": "https://example.com/villa.jpg"
+}
+```
+
+**Success Response (201):**
+```json
+{
+  "success": true,
+  "message": "Successfully Created Property",
+  "data": {
+    "id": "a1c3e5f7-...",
+    "title": "Luxury Villa in Miami",
+    "description": "5 bed, 4 bath waterfront property",
+    "price": "1250000.00",
+    "location": "Miami, FL",
+    "imageUrl": "https://example.com/villa.jpg",
+    "createdBy": "b2f7c9a1-..."
   }
 }
 ```
 </details>
 
-#### User Login
+---
 
-<details>
-<summary><b>🔑 POST /api/v1/auth/login</b></summary>
+## 🛡️ Request Validation (Zod)
 
-**Request:**
-```http
-POST /api/v1/auth/login
-Content-Type: application/json
+All incoming requests are validated using **Zod** schemas before reaching the controller. Validation is performed in dedicated middleware classes.
 
+### How It Works
+
+```
+Request  →  Middleware (Zod parse)  →  Controller
+                 │
+                 ├─ ✅ Valid    → req.body/params overwritten with parsed data → next()
+                 └─ ❌ Invalid  → 400 response with field-level error messages
+```
+
+### Schemas
+
+**User Schemas** (`src/schemas/user.schema.js`):
+
+```js
+// SignupSchema
 {
-  "email": "john@example.com",
-  "password": "SecurePass123!"
+  email:    z.string().email().transform(toLowerCase),
+  password: z.string().min(8).max(20)
+              .refine(hasUppercase)
+              .refine(hasNumber)
+              .refine(hasSpecialChar),
+  role:     z.enum(['AGENT', 'BUYER']).optional()
+}
+
+// LoginSchema
+{
+  email:    z.string().email().transform(toLowerCase),
+  password: z.string()
 }
 ```
 
-**Success Response (200 OK):**
-```json
+**Property Schemas** (`src/schemas/property.schema.js`):
+
+```js
+// AddPropertySchema
 {
-  "success": true,
-  "message": "Login successful",
-  "data": {
-    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "user": {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "role": "user"
+  title:       z.string().min(3).max(255),
+  description: z.string().optional(),
+  price:       z.preprocess(Number, z.number().positive()),
+  location:    z.string().min(1),
+  imageUrl:    z.string().url().optional().or(z.literal(''))
+}
+
+// UpdatePropertySchema — partial version of AddPropertySchema
+// PropertyIdSchema     — validates UUID format for :id param
+```
+
+### Validation Middleware Example
+
+```js
+// Reusable Zod parser inside middleware class
+#validate(schema, req, res, next) {
+  try {
+    req.body = schema.parse(req.body);
+    next();
+  } catch (err) {
+    if (err instanceof ZodError) {
+      const messages = err.issues
+        .map((e) => `${e.path.join('.')}: ${e.message}`)
+        .join(', ');
+      return responseHandler.error(res, messages, 400);
     }
+    next(err);
   }
 }
 ```
 
-**Headers:** Refresh token is also set in HttpOnly cookie
+---
+
+## ⚠️ Error Handling
+
+The project implements a **three-layer error handling strategy** — custom error classes, a global error middleware, and an async handler wrapper.
+
+### 1. Custom Error Classes
+
+**`AppError`** — General application-level errors:
+```js
+class AppError extends Error {
+  constructor(name, message, explanation, statusCode = 500) {
+    super();
+    this.name        = name;
+    this.message     = message;
+    this.explanation = explanation;
+    this.statusCode  = statusCode;
+  }
+}
 ```
-Set-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict
+
+**`ServiceError`** — Business logic / service-layer errors:
+```js
+class ServiceErrors extends Error {
+  constructor(name, message, explanation, statusCode = 500) {
+    super();
+    this.name        = 'ServiceError';
+    this.message     = message;
+    this.explanation = explanation;
+    this.statusCode  = statusCode;
+  }
+}
 ```
-</details>
 
-#### Refresh Token
+Both classes carry a `statusCode` and `explanation`, enabling the global error middleware to return precise HTTP responses.
 
-<details>
-<summary><b>🔄 POST /api/v1/auth/refresh</b></summary>
+### 2. Global Error Middleware
 
-**Request:**
-```http
-POST /api/v1/auth/refresh
-Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Registered as the **last middleware** in the Express pipeline (`src/middlewares/error.middleware.js`):
+
+```js
+const errorMiddleware = (err, req, res, next) => {
+  // Custom errors (AppError / ServiceError)
+  if (err.statusCode) {
+    return responseHandler.error(res, err.message, err.statusCode, { explanation: err.explanation });
+  }
+
+  // Sequelize errors
+  if (err.name === 'SequelizeUniqueConstraintError')   // → 409 Conflict
+  if (err.name === 'SequelizeValidationError')          // → 400 Bad Request
+  if (err.name === 'SequelizeForeignKeyConstraintError')// → 400 Bad Request
+  if (err.name === 'SequelizeDatabaseError')            // → 500 Internal Server Error
+
+  // Fallback
+  return responseHandler.error(res, "Something went wrong");
+};
 ```
 
-**Success Response (200 OK):**
+### 3. Error Flow
+
+```
+Controller / Service throws error
+       │
+       ▼
+asyncHandler catches rejected promise  →  calls next(err)
+       │
+       ▼
+Global Error Middleware
+  ├─ Custom Error?      → respond with err.statusCode + err.message
+  ├─ Sequelize Error?   → respond with mapped status code
+  └─ Unknown Error?     → respond with 500 "Something went wrong"
+```
+
+---
+
+## 📦 Response Handler
+
+All API responses follow a **consistent JSON structure** via `src/utlis/response.handler.js`:
+
+### Success Response
+```js
+responseHandler.success(res, data, message, statusCode)
+```
 ```json
 {
   "success": true,
-  "message": "Token refreshed successfully",
-  "data": {
-    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "expiresIn": 900
-  }
+  "message": "Operation successful",
+  "data": { ... }
 }
 ```
 
-**Error Response (401 Unauthorized):**
+### Error Response
+```js
+responseHandler.error(res, message, statusCode, data)
+```
 ```json
 {
   "success": false,
-  "message": "Invalid or expired refresh token"
+  "message": "Something went wrong",
+  "data": { ... }
 }
 ```
-</details>
 
-#### Get User Profile
+This ensures every endpoint — whether successful or failed — returns a predictable format that frontend clients can reliably parse.
 
-<details>
-<summary><b>👤 GET /api/v1/auth/profile</b></summary>
+---
 
-**Request:**
-```http
-GET /api/v1/auth/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+## 🔄 Async Handler
+
+A lightweight wrapper (`src/utlis/async.handler.js`) that eliminates repetitive try/catch blocks in controllers and services:
+
+```js
+const asyncHandler = (fn) => (req, res, next) => {
+  return Promise.resolve(fn(req, res, next)).catch(next);
+};
 ```
 
-**Success Response (200 OK):**
-```json
-{
-  "success": true,
-  "data": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "role": "user",
-    "createdAt": "2026-01-07T10:00:00.000Z",
-    "updatedAt": "2026-01-07T10:00:00.000Z"
-  }
+**Usage in controllers:**
+```js
+class AuthController {
+  signup = asyncHandler(async (req, res) => {
+    const response = await userService.createService(req.body);
+    return responseHandler.success(res, response, "Successfully Signup");
+  });
 }
 ```
-</details>
+
+If `userService.createService()` throws, the error is automatically forwarded to the global error middleware — no manual try/catch needed.
+
+---
 
 ## 🗃️ Database Schema
 
-### User Table
+Three models with UUID primary keys and Sequelize-managed timestamps.
 
-| Column | Type | Constraints | Default | Description |
-|:-------|:-----|:------------|:--------|:------------|
-| `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | - | Unique user identifier |
-| `name` | VARCHAR(255) | NOT NULL | - | User's full name |
-| `email` | VARCHAR(255) | NOT NULL, UNIQUE | - | Email address |
-| `password` | VARCHAR(255) | NOT NULL | - | Bcrypt hashed password |
-| `role` | ENUM | NOT NULL | 'user' | User role ('admin', 'user') |
-| `isEmailVerified` | BOOLEAN | - | false | Email verification status |
-| `lastLogin` | TIMESTAMP | - | NULL | Last login timestamp |
-| `createdAt` | TIMESTAMP | - | CURRENT_TIMESTAMP | Account creation time |
-| `updatedAt` | TIMESTAMP | - | CURRENT_TIMESTAMP | Last update time |
-| `deletedAt` | TIMESTAMP | - | NULL | Soft delete timestamp |
+### User
 
-**Indexes:**
-```sql
-CREATE UNIQUE INDEX idx_user_email ON users(email);
-CREATE INDEX idx_user_role ON users(role);
-CREATE INDEX idx_user_createdAt ON users(createdAt);
+| Column | Type | Constraints |
+|:-------|:-----|:------------|
+| `id` | UUID (v4) | Primary Key, Auto-generated |
+| `email` | STRING | NOT NULL, UNIQUE, validated |
+| `username` | STRING | Optional |
+| `password` | STRING | NOT NULL, bcrypt hashed |
+| `refreshToken` | TEXT | Nullable |
+| `role` | ENUM(`BUYER`, `AGENT`) | NOT NULL, default: `BUYER` |
+| `isActive` | BOOLEAN | NOT NULL, default: `false` |
+| `createdAt` | TIMESTAMP | Auto-managed |
+| `updatedAt` | TIMESTAMP | Auto-managed |
+
+### Property
+
+| Column | Type | Constraints |
+|:-------|:-----|:------------|
+| `id` | UUID (v4) | Primary Key, Auto-generated |
+| `title` | STRING | NOT NULL |
+| `description` | TEXT | Optional |
+| `price` | DECIMAL(12,2) | NOT NULL |
+| `location` | STRING | NOT NULL |
+| `imageUrl` | STRING | Optional |
+| `createdBy` | UUID | FK → Users.id, ON DELETE CASCADE |
+| `createdAt` | TIMESTAMP | Auto-managed |
+| `updatedAt` | TIMESTAMP | Auto-managed |
+
+### Favourite (Join Table)
+
+| Column | Type | Constraints |
+|:-------|:-----|:------------|
+| `id` | UUID (v4) | Primary Key, Auto-generated |
+| `userId` | UUID | FK → Users.id |
+| `propertyId` | UUID | FK → Properties.id |
+| `createdAt` | TIMESTAMP | Auto-managed |
+| `updatedAt` | TIMESTAMP | Auto-managed |
+
+### Relationships
+
+```
+User (AGENT)  ─── hasMany ───▶  Property       (one agent → many properties)
+User (BUYER)  ─── belongsToMany ───▶  Property  (many buyers ↔ many properties via Favourite)
 ```
 
-## 🔐 Security
-
-### Token Security Strategy
-
-```
-╔═══════════════════════════════════════════════════════════╗
-║                  TOKEN LIFECYCLE                         ║
-╠═══════════════════════════════════════════════════════════╣
-║                                                           ║
-║  🔑 ACCESS TOKEN              🔄 REFRESH TOKEN           ║
-║  ├─ Lifetime: 15 minutes      ├─ Lifetime: 7 days       ║
-║  ├─ Location: Memory/Header   ├─ Location: HttpOnly     ║
-║  ├─ Usage: API calls          ├─ Usage: Token renewal   ║
-║  ├─ Scope: All endpoints      ├─ Scope: /refresh only   ║
-║  └─ Claims: userId, role, exp └─ Claims: userId, exp     ║
-║                                                           ║
-║  ⚠️  Token Rotation: Every refresh generates new tokens   ║
-║  ⚠️  Signing: HS256 algorithm with strong secrets         ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-```
-
-### Password Security
-
-**Bcrypt Configuration:**
-- **Algorithm:** bcrypt (one-way hashing)
-- **Salt Rounds:** 12 (configurable, higher = slower but more secure)
-- **Cost Factor:** Adapts to hardware improvements over time
-
-```javascript
-// Password hashing example
-const bcrypt = require('bcrypt');
-const SALT_ROUNDS = 12;
-
-// Hash password during registration
-const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
-// Verify password during login
-const isValid = await bcrypt.compare(inputPassword, hashedPassword);
-```
-
-### Security Best Practices Implemented
-
-✅ **HTTPS Only:** Secure cookie flag enabled
-✅ **HttpOnly Cookies:** Prevents XSS attacks on refresh tokens
-✅ **CSRF Protection:** SameSite cookie policy (Strict)
-✅ **JWT Signing:** Strong secret keys (min 32 characters)
-✅ **Password Hashing:** Industry-standard bcrypt
-✅ **Rate Limiting:** Prevents brute force attacks
-✅ **Input Validation:** Schema validation on all endpoints
-✅ **Error Masking:** Generic error messages prevent information leakage
-✅ **Token Expiration:** Short-lived access tokens (15 min)
-✅ **Service Auth:** Internal token verification for microservice calls
-
-### Environment Security
-
-**Never commit secrets!**
-```bash
-# .gitignore
-.env
-.env.local
-.env.*.local
-```
-
-Generate strong secrets:
-```bash
-# Generate 32-byte random string for JWT keys
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-## 📦 Dependencies
-
-| Package | Version | Purpose |
-|:--------|:--------|:--------|
-| **express** | ^5.1.0 | Web framework and routing |
-| **sequelize** | ^6.37.7 | PostgreSQL ORM |
-| **pg** | ^8.16.3 | PostgreSQL database driver |
-| **pg-hstore** | ^2.3.4 | Sequelize type support |
-| **bcrypt** | ^6.0.0 | Password hashing and verification |
-| **jsonwebtoken** | ^9.0.2 | JWT token creation and validation |
-| **amqplib** | ^0.10.9 | RabbitMQ client library |
-| **cookie-parser** | ^1.4.7 | HTTP cookie parsing middleware |
-| **body-parser** | ^2.2.0 | Request body parsing |
-| **dotenv** | ^17.2.3 | Environment variable management |
-| **sequelize-cli** | ^6.6.3 | Sequelize CLI tools |
-| **nodemon** | ^3.1.11 | Development auto-reload (dev only) |
-
-**Total Dependencies:** 12 production packages
+---
 
 ## 🐳 Docker Deployment
 
-### Build Docker Image
+### Build & Run
 
 ```bash
 # Build the image
-docker build -t power11-auth-service:latest .
+docker build -t real-estate-backend .
 
-# Tag for registry
-docker tag power11-auth-service:latest your-registry/power11-auth-service:1.0.0
-```
-
-### Run Container Locally
-
-```bash
-# Run with environment file
+# Run the container
 docker run -d \
-  --name auth-service \
-  -p 3001:3001 \
+  --name real-estate-api \
+  -p 3000:3000 \
   --env-file .env \
-  --network power11-network \
-  power11-auth-service:latest
+  real-estate-backend
 
-# Check logs
-docker logs -f auth-service
-
-# Stop container
-docker stop auth-service
+# View logs
+docker logs -f real-estate-api
 ```
 
-### Docker Compose
+### Dockerfile Overview
 
-Create `docker-compose.yml`:
-
-```yaml
-version: '3.8'
-
-services:
-  auth-service:
-    build: .
-    ports:
-      - "3001:3001"
-    environment:
-      - NODE_ENV=production
-      - PORT=3001
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - MESSAGE_BROKER_URL=amqp://rabbitmq:5672
-    depends_on:
-      - postgres
-      - rabbitmq
-    networks:
-      - power11-network
-    restart: unless-stopped
-
-  postgres:
-    image: postgres:15-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: power11_auth
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your_password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - power11-network
-
-  rabbitmq:
-    image: rabbitmq:3.12-management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - power11-network
-
-volumes:
-  postgres_data:
-  rabbitmq_data:
-
-networks:
-  power11-network:
-    driver: bridge
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package* ./
+RUN npm ci
+COPY . .
+CMD ["npm", "start"]
 ```
 
-**Deploy with Docker Compose:**
-```bash
-docker-compose up -d
-docker-compose logs -f auth-service
-```
+---
 
-## 🔧 Development
-
-### Common Commands
+## 🔧 Development Commands
 
 ```bash
-# Start development server with auto-reload
+# Start dev server (with nodemon auto-reload)
 npm start
 
 # Run database migrations
@@ -681,289 +720,40 @@ npx sequelize-cli db:migrate
 # Undo last migration
 npx sequelize-cli db:migrate:undo
 
-# Undo all migrations
-npx sequelize-cli db:migrate:undo:all
-
-# Create new migration
-npx sequelize-cli migration:generate --name migration-name
-
-# Create new model
-npx sequelize-cli model:generate --name UserRole --attributes id:integer,name:string
-
-# Seed database
+# Seed the database
 npx sequelize-cli db:seed:all
 
-# Run specific seed
-npx sequelize-cli db:seed --seed 20260101120000-demo-user.js
+# Generate a new migration
+npx sequelize-cli migration:generate --name <migration-name>
 
-# Check database connection
-npm run db:check
-```
-
-### Project Conventions
-
-**Naming Conventions:**
-- Controllers: `entityName.controller.js`
-- Services: `entityName.service.js`
-- Routes: `entityName.routes.js`
-- Models: PascalCase (e.g., `User.js`)
-- Migrations: `YYYYMMDDHHMMSS-description.js`
-
-**Code Style:**
-- Use async/await (no callbacks)
-- Include JSDoc comments for public methods
-- Follow Airbnb JavaScript style guide
-- Use meaningful variable names
-
-**Error Handling:**
-```javascript
-// Good: Consistent error format
-try {
-  // logic
-} catch (error) {
-  logger.error('Error message:', error);
-  return res.status(500).json({
-    success: false,
-    message: 'Internal server error'
-  });
-}
-
-// Bad: No error handling
-const data = await User.findAll();
-res.json(data);
-```
-
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-<details>
-<summary><b>❌ "ECONNREFUSED: Connection refused to PostgreSQL"</b></summary>
-
-**Solution:**
-1. Verify PostgreSQL is running: `psql --version`
-2. Check database credentials in `.env` file
-3. Ensure database exists: `createdb power11_auth`
-4. Restart PostgreSQL service:
-   ```bash
-   # macOS
-   brew services restart postgresql
-   
-   # Linux
-   sudo systemctl restart postgresql
-   
-   # Windows
-   # Restart PostgreSQL service from Services app
-   ```
-</details>
-
-<details>
-<summary><b>❌ "ECONNREFUSED: Connection refused to RabbitMQ"</b></summary>
-
-**Solution:**
-1. Check RabbitMQ status
-2. Start RabbitMQ:
-   ```bash
-   # macOS
-   brew services start rabbitmq
-   
-   # Linux
-   sudo systemctl start rabbitmq-server
-   
-   # Docker
-   docker run -d -p 5672:5672 -p 15672:15672 rabbitmq:3.12-management
-   ```
-3. Access management UI: `http://localhost:15672`
-</details>
-
-<details>
-<summary><b>❌ "Port 3001 already in use"</b></summary>
-
-**Solution:**
-```bash
-# Find and kill process using port 3001
-# Windows
-netstat -ano | findstr :3001
-taskkill /PID <PID> /F
-
-# macOS/Linux
-lsof -i :3001
-kill -9 <PID>
-
-# Or change port in .env
-PORT=3002
-```
-</details>
-
-<details>
-<summary><b>❌ "SequelizeConnectionError: password authentication failed"</b></summary>
-
-**Solution:**
-1. Verify database user credentials
-2. Reset PostgreSQL password:
-   ```bash
-   psql -U postgres
-   ALTER USER postgres WITH PASSWORD 'new_password';
-   ```
-3. Update `.env` with correct credentials
-</details>
-
-<details>
-<summary><b>❌ "JWT token is invalid or expired"</b></summary>
-
-**Solution:**
-1. Ensure `PRIVATEJWT` environment variable is set
-2. Check token expiration (default: 15 minutes)
-3. Use `/api/v1/auth/refresh` endpoint to get new token
-4. Verify token hasn't been tampered with
-</details>
-
-### Debug Mode
-
-Enable detailed logging:
-
-```bash
-# Set debug environment variable
-DEBUG=auth:* npm start
-
-# Or in .env
-LOG_LEVEL=debug
-DEBUG=auth:*,sequelize:*
-```
-
-### Health Check Endpoint
-
-```bash
-# Check service health
-curl http://localhost:3001/health
-
-# Expected response
-{
-  "status": "up",
-  "timestamp": "2026-01-07T10:00:00.000Z",
-  "uptime": 3600,
-  "database": "connected",
-  "rabbitmq": "connected"
-}
+# Generate a new model
+npx sequelize-cli model:generate --name <ModelName> --attributes <attr>:<type>
 ```
 
 ---
 
-## 📊 Performance Optimization
+## 📦 Dependencies
 
-### Database Query Optimization
-
-```javascript
-// Use eager loading to prevent N+1 queries
-User.findAll({
-  include: [{ association: 'roles' }],
-  raw: true
-});
-
-// Use pagination for large datasets
-User.findAll({
-  limit: 20,
-  offset: (page - 1) * 20
-});
-
-// Index frequently searched columns
-```
-
-### Caching Strategy
-
-- **Access Tokens:** Cached in memory (15 min TTL)
-- **User Profiles:** Redis cache (1 hour TTL)
-- **Permissions:** In-memory RBAC cache (updated on role change)
-
-### Rate Limiting
-
-All endpoints are protected with rate limiting:
-- 5 req/min for registration
-- 10 req/min for login
-- 20 req/min for token refresh
-- 60 req/min for profile endpoints
+| Package | Purpose |
+|:--------|:--------|
+| `express` | Web framework |
+| `sequelize` | PostgreSQL ORM |
+| `pg` / `pg-hstore` | PostgreSQL driver |
+| `zod` | Request schema validation |
+| `jsonwebtoken` | JWT token creation & verification |
+| `bcrypt` | Password hashing |
+| `cookie-parser` | Parse HTTP cookies |
+| `body-parser` | Parse request bodies |
+| `dotenv` | Load environment variables |
+| `nodemon` | Development auto-reload |
+| `sequelize-cli` | Database migration tooling |
 
 ---
 
-## 🤝 Contributing
 
-We welcome contributions! Please follow these guidelines:
-
-1. **Fork the repository**
-2. **Create a feature branch:**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. **Make your changes and commit:**
-   ```bash
-   git commit -m "feat: add new feature"
-   ```
-4. **Push to your fork:**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. **Open a Pull Request with description of changes**
-
-**Commit Message Format:**
-```
-type(scope): subject
-
-body
-
-footer
-```
-
-**Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
----
-
-## 📄 License
-
-This project is licensed under the **ISC License** - see [LICENSE](LICENSE) file for details.
-
----
-
-## 📞 Support & Contact
-
-- **Documentation Issues:** Open an issue on GitHub
-- **Security Concerns:** Email security@power11.com
-- **Questions:** Check existing issues or create a new one
-
----
-
-## 📈 Roadmap
-
-### Planned Features
-- [ ] Two-factor authentication (2FA)
-- [ ] OAuth 2.0 integration (Google, GitHub)
-- [ ] Email verification workflow
-- [ ] Password reset functionality
-- [ ] User session management
-- [ ] Activity logging and audit trail
-- [ ] API key management for developers
-
-### In Progress
-- [ ] Enhanced error handling
-- [ ] Comprehensive test suite
-
-### Completed ✅
-- JWT token authentication
-- Role-based access control
-- Password encryption with bcrypt
-- RabbitMQ integration
-- Docker support
-
----
 
 <div align="center">
 
-### Made with ❤️ for Power11 Fantasy Sports Platform
-
-**[⬆ Back to Top](#-auth-microservice)**
-
-<br/>
-
-**Version:** 1.0.0 | **Last Updated:** January 7, 2026 | **Status:** Production Ready ✅
+**[⬆ Back to Top](#-real-estate-e-commerce-backend)**
 
 </div>
