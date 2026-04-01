@@ -13,7 +13,13 @@ class userService extends CurdService {
             const res = await USER_REPO.getBydata({id:  userId});
             return res;
          }
-        
+    )
+
+    getByEmail= asyncHandler(
+          async (email) => {
+            const res = await USER_REPO.getBydata({email:  email});
+            return res;
+         }
     )
 
     
@@ -128,7 +134,6 @@ class userService extends CurdService {
             return response;
     } )
 
-
     
     logout = asyncHandler ( async(data, res) =>{
         const user = await JwtHelper.verifyRefreshToken(data);
@@ -143,12 +148,7 @@ class userService extends CurdService {
         return `Sucessfully Log out user ${user.data.id} `;
     } )
   
-
- 
-
-   
 }
 
 const userservice= new userService()
-
 module.exports = userservice;

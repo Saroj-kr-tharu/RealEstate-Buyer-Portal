@@ -14,7 +14,17 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+        User.belongsToMany(models.Property, {
+        through: models.Favourite,
+        foreignKey: 'userId',
+        as: 'favourites',
+        onDelete: 'CASCADE'
+      });
 
+      User.hasMany(models.Property, {
+          foreignKey: 'createdBy',
+          as: 'properties'
+        });
     }
   }
   User.init({
@@ -45,9 +55,9 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     role: {
-      type: DataTypes.ENUM("CUSTOMER", "ADMIN"),
+      type: DataTypes.ENUM("BUYER", "AGENT"),
       allowNull: false,
-      defaultValue:"CUSTOMER"
+      defaultValue:"BUYER"
 
     },
     isActive: {

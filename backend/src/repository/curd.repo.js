@@ -28,10 +28,11 @@ class CURD_REPO{
         return res; 
     } )
     
-    getAll = asyncHandler ( async(email) =>{
+    getAll = asyncHandler ( async(id) =>{
         const res = await this.model.findAll();
-            return res;
+        return res; 
     } )
+    
    
 }
 

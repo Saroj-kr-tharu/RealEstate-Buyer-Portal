@@ -16,6 +16,9 @@ const SignupSchema = z.object({
     .refine((val) => /[0-9]/.test(val),        { message: 'Must contain at least one number' })
     .refine((val) => /[^a-zA-Z0-9]/.test(val), { message: 'Must contain at least one special character' }),
 
+  role: z
+    .enum(['AGENT', 'BUYER'], { required_error: 'Role is required' })
+    .optional(),
   
 });
 

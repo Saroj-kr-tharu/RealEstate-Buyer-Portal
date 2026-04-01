@@ -34,9 +34,9 @@ module.exports = {
     },
 
     role: {
-        type: Sequelize.ENUM("CUSTOMER", "ADMIN"),
+        type: Sequelize.ENUM("BUYER", "AGENT"),
         allowNull: false,
-        defaultValue: "CUSTOMER"
+        defaultValue: "BUYER"
       },
 
       isActive: {
