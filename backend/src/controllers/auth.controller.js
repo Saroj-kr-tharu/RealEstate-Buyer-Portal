@@ -1,5 +1,5 @@
 const {userService} = require('../services/index');
-const {SucessCode, ServerErrosCodes} = require('../utlis/Errors/https_codes')
+const {SucessCode, ServerErrosCodes} = require('../utlis/https.codes')
 
 class AuthController { 
 
