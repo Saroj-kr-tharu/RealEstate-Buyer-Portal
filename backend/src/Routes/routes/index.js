@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {authCtrl, proCtrl } = require('../../controllers/index')
+const {authCtrl, proCtrl, buyerCtrl } = require('../../controllers/index')
 const {userMw,proMw } = require('../../middlewares/index')
 
 
@@ -21,9 +21,16 @@ router.post( "/logout", authCtrl.logout );
 router.post( "/property",proMw.validateAdd,   proCtrl.add );
 router.delete( "/property/:id", proMw.validateDelete, proCtrl.delete );
 router.patch( "/property/:id", proMw.validateUpdate, proCtrl.update );
+router.get( "/propertyAgent",  proCtrl.getAllByUserId );
+
+
+// buyer 
+router.post( "/favorite/:id",proMw.validateDelete, buyerCtrl.like   );
+router.delete( "/favorite/:id",proMw.validateDelete,  buyerCtrl.dislike );
+router.get( "/favorite",   buyerCtrl.favorite );
+
 router.get( "/property",  proCtrl.getAll );
 router.get( "/property/:id",   proCtrl.getById );
-router.get( "/propertyAgent",  proCtrl.getAllByUserId );
 
 
  

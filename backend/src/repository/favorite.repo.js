@@ -14,6 +14,10 @@ class FavoriteRepo extends CURD_REPO {
       return res;
   } )
   
+  deleteBydata = asyncHandler ( async(data) =>{
+      const res = await this.model.destroy({ where: data });
+      return res;
+  } )
 
 
 }

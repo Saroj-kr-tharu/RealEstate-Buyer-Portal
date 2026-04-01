@@ -2,7 +2,7 @@ const CurdService = require('./curdService')
 const  PRO_REPO = require('../repository/property.repo')
 const { ServiceError,asyncHandler, JwtHelper} = require('../utlis/index');
 const {ServerErrosCodes} = require('../utlis/https.codes');
-const userservice = require('./user.service');
+
 
 class PropertyService extends CurdService {
     constructor(){
