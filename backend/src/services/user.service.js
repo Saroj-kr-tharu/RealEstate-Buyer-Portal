@@ -1,38 +1,37 @@
 const CurdService = require('./curdService')
 const  USER_REPO = require('../repository/user.repo')
-const {BcryptHelper, JwtHelper,} = require('../utlis/index');
-
+const {BcryptHelper, JwtHelper, ServiceError,asyncHandler} = require('../utlis/index');
+const {ServerErrosCodes} = require('../utlis/https.codes');
 
 class userService extends CurdService {
     constructor(){
         super(USER_REPO)
     }
 
-     async getByData(userId) {
-        try {
-            
-        const res = await USER_REPO.getBydata({id:  userId});
-        return res;
-        } catch (error) {
-        console.log("Something went wrong in service layer (getByData)");
-        throw error;
-        }
-    }
+    getByData= asyncHandler(
+          async (userId) => {
+            const res = await USER_REPO.getBydata({id:  userId});
+            return res;
+         }
+        
+    )
+
     
-    async loginService(data, res){
-        try {
+    loginService = asyncHandler (
+        async(data, res) => {
+
             const {password, email} = data;
             const infoUser = await USER_REPO.getByEmail(email);
-            // console.log("user => ",infoUser?.dataValues )
+           
             const hashpassword = infoUser?.dataValues?.password
 
-            if(!hashpassword) throw new Error("Invalid Credentials")
+            if(!hashpassword) 
+                throw new ServiceError( "","User is Not Found", "Email is Found", ServerErrosCodes.INTERNAL_SERVER_ERROR)
                 
                 const isValid = await BcryptHelper.checkPasswordService(password, hashpassword );
                 
-                if (!isValid)  throw new Error("Invalid Credentials");
-                console.log("user => ",infoUser?.dataValues )
-                if (infoUser?.dataValues?.isActive)  throw new Error("You are Ban User");
+                if (!isValid)  throw new ServiceError("", "Password not match", "Password is not match", ServerErrosCodes.INTERNAL_SERVER_ERROR);
+              
 
 
             // access token
@@ -41,7 +40,6 @@ class userService extends CurdService {
             // refresh token 
             const refreshToken = await JwtHelper.createRefreshToken({email, id: infoUser?.dataValues?.id,});
 
-          
 
             // update refresh token in db 
             await USER_REPO.updateById({refreshToken: refreshToken},infoUser?.dataValues?.id );
@@ -64,25 +62,17 @@ class userService extends CurdService {
             }
             
             return response;
-            
-
-        } catch (error) {
-            console.log("something went wrong in service curd level  (create) ")
-             throw error;
-           
         }
-    }
-
-    async verifyToken(data){
-        try {
-           
+    )
+    
+    
+    verifyToken = asyncHandler( 
+        async(data) => {
             const user = await JwtHelper.verifyToken(data);
 
              if (!user)
-                throw new Error("Token is invalid or Expired");
+                throw new ServiceError("", "Token is invalid or Expired",  );
                 
-               
-            
             const infoUser = await USER_REPO.getByEmail(user.data.email);
 
            
@@ -94,18 +84,11 @@ class userService extends CurdService {
             }
             
             return response;
-            
-
-        } catch (error) {
-            console.log("something went wrong in service curd level  (verifyToken) ")
-            throw error;
         }
-    }
+    )
 
-    async genRefreshToken(data, res){
-        try {
-         
-            const isvalid = await JwtHelper.verifyRefreshToken(data);
+    genRefreshToken = asyncHandler( async(data, res) => {
+        const isvalid = await JwtHelper.verifyRefreshToken(data);
             if(!isvalid) throw new Error ('invalid refresh token ')
             if (!isvalid) throw new Error("Token is invalid or Expired");
             
@@ -143,20 +126,12 @@ class userService extends CurdService {
             }
             
             return response;
-            
+    } )
 
-        } catch (error) {
-               throw error;
 
-        }
-    }
-
-  
-
-    async logout(data, res){
-        try {
-           
-            const user = await JwtHelper.verifyRefreshToken(data);
+    
+    logout = asyncHandler ( async(data, res) =>{
+      const user = await JwtHelper.verifyRefreshToken(data);
             if (!user)
                 throw new Error("Token is invalid or Expired")
 
@@ -164,14 +139,11 @@ class userService extends CurdService {
             await USER_REPO.updateById({refreshToken: null},user.data.id );
             res.clearCookie("refreshToken");
                
-            return `Log out user ${user.data.id} `;
-            
+            return `Sucessfully Log out user ${user.data.id} `;
+    } )
+  
 
-        } catch (error) {
-            console.log("something went wrong in service curd level  (verifyToken) ")
-            throw error;
-        }
-    }
+ 
 
    
 }

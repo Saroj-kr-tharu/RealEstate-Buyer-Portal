@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser')
 const {PORT}= require('./config/server.config')
 const appRoutes = require('./Routes/index')
 
+const {errorMw} = require("./middlewares/index")
+
 const serverSetupAndStart = async () => {
     const app = express()
     app.use(bodyParser.json());
@@ -16,6 +18,8 @@ const serverSetupAndStart = async () => {
     
     
     app.use("/api", appRoutes)
+
+    app.use(errorMw);
 
     app.listen(PORT, async () => {
         console.log(` Backend Server started at ${PORT}`)

@@ -1,19 +1,13 @@
 
 const {ClientErrorsCodes} = require('../utlis/https.codes')
-
+const {responseHandler} = require('../utlis/index')
 class UserMiddleware {
 
    signupAndLogin = (req, res, next) => {
       if (!req.body?.email || !req.body?.password   ) {
-        console.log("Something went wrong in auth middleware");
+
+        return responseHandler.error(res, "Email or Password is missing", ClientErrorsCodes.BAD_REQUEST)
         
-        return res.status(ClientErrorsCodes.BAD_REQUEST).json({
-          
-          data: {},
-          message: "Email or Password is missing  ",
-          success: false,
-        
-        });
       }
 
       next();
@@ -22,13 +16,8 @@ class UserMiddleware {
     verifyToken = (req, res, next) => {
         const token = req?.headers['x-access-token'];
         if (!token ) {
-            console.log("token is missing ");
+            return responseHandler.error(res, "Token is missing", ClientErrorsCodes.UNAUTHORIZED)
             
-            return res.status(ClientErrorsCodes.UNAUTHORISED).json({
-            data: {},
-            message: "token is missing  ",
-            success: false,
-            });
         }
 
       next();
@@ -36,32 +25,15 @@ class UserMiddleware {
     
     verifyRefreshToken = (req, res, next) => {
 
-      try {
-        
-        
-        
        const oldToken = req.cookies['refreshToken'];
        
         if (!oldToken ) {
-            console.log("No refresh token is missing ");
-            
-            return res.status(ClientErrorsCodes.UNAUTHORISED).json({
-            data: {},
-            message: "refresh token is missing  ",
-            success: false,
-            });
+            // console.log("No refresh token is missing ");
+            return responseHandler.error(res, "Refresh Token is missing", ClientErrorsCodes.UNAUTHORIZED)
         }
 
       next();
-      } catch (error) {
-           return res.status(ClientErrorsCodes.NOT_FOUND).json({
-            message: "refresh token is missing ",
-            success: false,
-          });
-          // throw new Error('old token is not found')
-      }
-
-        
+      
     };
 
 }

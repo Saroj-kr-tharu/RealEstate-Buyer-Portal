@@ -1,70 +1,38 @@
 
-
+const {asyncHandler} = require("../utlis/index")
 
 class CurdService { 
     constructor(repo){
         this.repo = repo;
     }
 
-    async createService(data){
-        try {
-            const res = await this.repo.create(data);
-            
-            return res; 
-
-        } catch (error) {
-            console.log("something went wrong in service curd level  (create) ", error)
-            throw error; 
-        }
-    }
-
-    async deleteService(data){
-        try {
-            const res = await this.repo.delete(data);
-            return res; 
-
-        } catch (error) {
-            console.log("something went wrong in service curd level  (create) ")
-              throw error; 
-        }
-    }
-
-    async updateService(data,id){
-        try {
-            console.log(`data => ${data} id => ${id}`)
-            const res = await this.repo.updateById(data, id );
-            return res; 
-
-        } catch (error) {
-            console.log("something went wrong in service curd level  (update) ")
-              throw error; 
-        }
-    }
-
+    createService = asyncHandler ( async(data) =>{
+        const res = await this.repo.create(data);
+        return res; 
+    } )
     
-
-    async getByIdService(data){
-        try {
-            const res = await this.repo.getbyId(data);
-            return res; 
-
-        } catch (error) {
-            console.log("something went wrong in service curd level  (getById) ")
-             throw error; 
-        }
-    }
+    deleteService = asyncHandler ( async(data) =>{
+        const res = await this.repo.delete(data);
+        return res; 
+    } )
     
-    async getAll(){
-        try {
-            const res = await this.repo.getAll();
-            console.log('from repo => ',res)
-            return res; 
+    updateService = asyncHandler ( async(data,id) =>{
+        // console.log(`data => ${data} id => ${id}`)
+        const res = await this.repo.updateById(data, id );
+        return res; 
+    } )
+    
+    getByIdService = asyncHandler ( async(data) =>{
+        const res = await this.repo.getbyId(data);
+        return res; 
+    } )
+    
+    getAll = asyncHandler ( async() =>{
+        const res = await this.repo.getAll();
+        return res; 
+    } )
 
-        } catch (error) {
-            console.log("something went wrong in service curd level  (getAll) ")
-             throw error; 
-        }
-    }
+
 
 }
 
