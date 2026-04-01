@@ -1,16 +1,35 @@
 
+const { ZodError }       = require('zod');
+
+const { SignupSchema, LoginSchema } = require('../schemas/user.schema');
 const {ClientErrorsCodes} = require('../utlis/https.codes')
 const {responseHandler} = require('../utlis/index')
+
+
 class UserMiddleware {
 
-   signupAndLogin = (req, res, next) => {
-      if (!req.body?.email || !req.body?.password   ) {
+    // Reusable Zod parser 
+     #validate(schema, req, res, next) {
+      try {
+        req.body = schema.parse(req.body);
+        next();
+      } catch (err) {
+        if (err instanceof ZodError || err?.name === 'ZodError') {
+          const issues = err.issues ?? err.errors ?? [];
+          const messages = issues
+            .map((e) => `${e.path.join('.') || 'field'}: ${e.message}`)
+            .join(', ');
+          return responseHandler.error(res, messages, ClientErrorsCodes.BAD_REQUEST);
+        }
 
-        return responseHandler.error(res, "Email or Password is missing", ClientErrorsCodes.BAD_REQUEST)
-        
+        next(err); 
       }
+    }
 
-      next();
+    signupAndLogin = (req, res, next) => {
+      const isSignup = req.path.includes('signup');
+      const schema   = isSignup ? SignupSchema : LoginSchema;
+      this.#validate(schema, req, res, next);
     };
     
     verifyToken = (req, res, next) => {

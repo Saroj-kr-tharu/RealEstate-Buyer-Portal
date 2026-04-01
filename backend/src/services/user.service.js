@@ -131,15 +131,16 @@ class userService extends CurdService {
 
     
     logout = asyncHandler ( async(data, res) =>{
-      const user = await JwtHelper.verifyRefreshToken(data);
-            if (!user)
-                throw new Error("Token is invalid or Expired")
+        const user = await JwtHelper.verifyRefreshToken(data);
+        if (!user)
+            throw new Error("Token is invalid or Expired")
+        // console.log("user => ", user)
 
-             // update refresh token in db 
-            await USER_REPO.updateById({refreshToken: null},user.data.id );
-            res.clearCookie("refreshToken");
-               
-            return `Sucessfully Log out user ${user.data.id} `;
+         // update refresh token in db 
+        await USER_REPO.updateById({refreshToken: null},user.data.id );
+        res.clearCookie("refreshToken");
+
+        return `Sucessfully Log out user ${user.data.id} `;
     } )
   
 

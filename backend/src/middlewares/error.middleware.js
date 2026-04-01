@@ -1,5 +1,6 @@
 
 const {responseHandler} = require('../utlis/index');
+const {ClientErrorsCodes,ServerErrorCodes} = require("../utlis/https.codes")
 
 const errorMiddleware = (err, req, res, next) => {
     console.log(err)
@@ -13,7 +14,28 @@ const errorMiddleware = (err, req, res, next) => {
         );
     }
 
-  
+    //  Sequelize  Error 
+    if (err.name === 'SequelizeUniqueConstraintError') {
+        const messages = err.errors.map((e) => `${e.path}: ${e.message}`).join(', ');
+        return responseHandler.error(res, messages, ClientErrorsCodes.CONFLICT);
+    }
+
+    
+    if (err.name === 'SequelizeValidationError') {
+        const messages = err.errors.map((e) => `${e.path}: ${e.message}`).join(', ');
+        return responseHandler.error(res, messages, ClientErrorsCodes.BAD_REQUEST);
+    }
+
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+        return responseHandler.error(res, 'Invalid reference: related record not found', ClientErrorsCodes.BAD_REQUEST);
+    }
+
+    if (err.name === 'SequelizeDatabaseError') {
+        return responseHandler.error(res, 'Database error occurred', ServerErrorCodes.INTERNAL_SERVER_ERROR);
+    }
+
+    
+    // back to normal global error 
     return responseHandler.error(res, "Something went wrong");
 };
 

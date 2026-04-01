@@ -43,7 +43,7 @@ class AuthController {
         async (req,res) => {
             const oldToken = req.cookies.refreshToken;
             if(!oldToken)
-                 return responseHandler.success(res, response, "Already Logout", SucessCode.OK)
+                 return responseHandler.success(res, {}, "Already Logout", SucessCode.OK)
 
             const response = await userService.logout(oldToken, res);
             return responseHandler.success(res, response, "Successfully Logout ", SucessCode.OK)
