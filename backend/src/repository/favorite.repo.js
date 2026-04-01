@@ -1,5 +1,5 @@
 const CURD_REPO = require("./curd.repo");
-const { Favourite } = require("../models/index");
+const { Favourite,  Property, User } = require("../models/index");
 
 
 const {asyncHandler} = require("../utlis/index")
@@ -10,7 +10,19 @@ class FavoriteRepo extends CURD_REPO {
   }
 
   getBydata = asyncHandler ( async(data) =>{
-      const res = await this.model.findOne({ where: data });
+      const res = await this.model.findAll({ 
+        where: data,
+        include: [
+        {
+          model: Property, 
+          attributes: ['title', 'price', 'location', 'imageUrl', 'description']
+        },
+        {
+          model: User, 
+          attributes: ['username', 'email']
+        }
+      ]
+      });
       return res;
   } )
   

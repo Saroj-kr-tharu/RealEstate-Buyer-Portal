@@ -24,7 +24,8 @@ class FavoriteService extends CurdService {
 
             // 3. check if same id is liked by same user 
             const favInfo = await FAV_REPO.getBydata({userId:userInfo?.data?.id , propertyId: id });
-            if(favInfo) 
+            
+            if(favInfo.length != 0 ) 
                 throw new ServiceError("", "Property is already like by User", "Property is already like by User", ServerErrosCodes.NOT_IMPLEMENTED);
 
             // 4. insteat 
@@ -49,7 +50,7 @@ class FavoriteService extends CurdService {
 
             // 3. check if same id is liked by same user 
             const favInfo = await FAV_REPO.getBydata({userId:userInfo?.data?.id , propertyId: id });
-            if(!favInfo) 
+            if(favInfo.length == 0) 
                 throw new ServiceError("", "Property is not liked by User", "Property is not liked by User", ServerErrosCodes.NOT_IMPLEMENTED);
 
             // 4. insteat 
