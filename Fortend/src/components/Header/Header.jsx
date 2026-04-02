@@ -11,7 +11,7 @@ import { NavLink } from "react-router-dom";
 
 const navLinks = [
   { label: "Home", href: "/", icon: <HiOutlineHome className="w-4 h-4" /> },
-  { label: "Agent", href: "/agent", icon: <HiOutlineUsers className="w-4 h-4" /> },
+  { label: "Dashboard", href: "/agent", icon: <HiOutlineUsers className="w-4 h-4" /> },
   { label: "About", href: "/about", icon: <HiOutlineInformationCircle className="w-4 h-4" /> },
 ];
 

@@ -64,6 +64,7 @@ class FavoriteService extends CurdService {
     getallFavoriate= asyncHandler(
           async (token) => {
             // 1. check token and verify buyer 
+            // console.log("token => ", token)
             const userInfo = await JwtHelper.verifyToken(token);
             if(userInfo?.data?.role !== "BUYER") 
                 throw new ServiceError("", "You are not BUYER", "You are not BUYER", ServerErrosCodes.NOT_IMPLEMENTED);
