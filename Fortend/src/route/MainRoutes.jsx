@@ -21,7 +21,7 @@ function MainRoutes() {
       <Route path="Login" element={<LoginCom />} />
       <Route path="Signup" element={<RegisterCom />} />
 
-       <Route path="/Agent" element={ <ProtectedRoute requiredRole="AGENT"> < AgentDashboard/> </ProtectedRoute>} />
+       <Route path="/agentDashboard" element={ <ProtectedRoute requiredRole="AGENT"> < AgentDashboard/> </ProtectedRoute>} />
        <Route path="/buyerDashboard" element={ <ProtectedRoute requiredRole="BUYER"> < BuyerDashboard/> </ProtectedRoute>} />
 
       </Routes>

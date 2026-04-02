@@ -2,12 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
 import axiosIntance from '../../Config/axiosInstance';
 
-const initialState= {
-    isLoggedIn: localStorage.getItem('isLoggedIn') || false , 
-    username: localStorage.getItem('username') || false , 
-    role: localStorage.getItem('role') || false , 
-    email: localStorage.getItem('email') || false,
-    token: localStorage.getItem('token') || false,
+const initialState = {
+    isLoggedIn: localStorage.getItem('isLoggedIn') === 'true',
+    username:   localStorage.getItem('username')   || '',
+    role:       localStorage.getItem('role')       || '',
+    email:      localStorage.getItem('email')      || '',
+    token:      localStorage.getItem('token')      || '',
 };
 
 export const register = createAsyncThunk('auth/signup', async(data) => {
@@ -55,20 +55,32 @@ export const login = createAsyncThunk('auth/login', async(data) => {
 })
 
 
+export const logout = createAsyncThunk('auth/logout', async() => {
+        try {
+
+            const response = axiosIntance.post('/logout');
+            toast.promise(response, {
+                loading: 'Logouting...',
+                success: 'Successfull Logout',
+                error: 'Logout Failed '
+            })
+            const result = await response;
+            
+            if(result.status == 200 ) return result;
+          
+
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.err || error?.response?.data?.message || 'Login failed');
+            
+        }
+})
 
 
 const authSlice = createSlice({
     name: 'authSlicer',
      initialState,
     reducers: {
-        logoutUser: (state) => {
-            state.email = '';
-            state.token = '';
-            state.isLoggedIn = false; 
-            state.role = '';
-            state.username = '';
-            localStorage.clear();
-        }
     },
     extraReducers: (builder) => {
     builder 
@@ -80,10 +92,25 @@ const authSlice = createSlice({
                 state.isLoggedIn = true; 
                 state.role = data.role;
                 state.username = data?.username | data?.email;
+                state.username   = data?.username || data?.email || '';
 
-                localStorage.setItem('isLoggedIn',true);
-                localStorage.setItem('role', data.role)
-                localStorage.setItem('token', data.jwt)
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('role',       data.role);
+                localStorage.setItem('token',      data.jwt);
+                localStorage.setItem('email',      data.email);
+                localStorage.setItem('username',   data?.username || data?.email || '');
+            }
+        })
+        .addCase(logout.fulfilled, (state,action) => {
+            if(action?.payload?.data){
+                
+                state.email = '';
+                state.token = '';
+                state.isLoggedIn = false; 
+                state.role = '';
+                state.username = '';
+                
+                localStorage.clear();
             }
         })
         

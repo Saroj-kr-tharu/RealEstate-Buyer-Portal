@@ -42,10 +42,10 @@ return (
               <button className="btn btn-outline btn-sm" onClick={() => onFn("view", item)}>
                 <FiEye /> View
               </button>
-              <button className="btn btn-outline btn-sm" onClick={() => onFn("like", item)}>
+              <button className="btn btn-outline btn-sm" onClick={() => onFn(from == "home" ? "like" : "dislike", item)}>
                 <FiHeart /> Like
               </button>
-              <button className="btn btn-primary btn-sm" onClick={() => onFn(from == "home" ? "like" : "dislike", item)}>
+              <button className="btn btn-primary btn-sm" onClick={() => onFn( "buy", item)}>
                 Buy Now
               </button>
             </>
