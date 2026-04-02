@@ -1,0 +1,68 @@
+networks:
+  RealEstate_net:
+    name: RealEstate_net
+    driver: bridge
+
+volumes:
+  backend_vol:
+  fortend_db_vol:
+  postgres_db_vol:
+
+services:
+  postgres_service:
+      image: postgres:latest
+      container_name: postgres_db
+      restart: unless-stopped
+      networks:
+        - RealEstate_net
+      env_file:
+        - ./envirnoment/.env.postgres
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_db_vol:/var/lib/postgresql
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres -d POSTGRES_db"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+  # Backend service 
+  Backend_service:
+    container_name: Backend_service
+    build: 
+      context: ./Backend
+      dockerfile: Dockerfile
+    networks:
+    - RealEstate_net
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./Backend:/realestate/backend
+      - backend_vol:/realestate/backend/node_modules
+    env_file:
+      - environment/.env.backend
+    depends_on:
+      postgres_service:
+        condition: service_healthy
+    command: >
+      sh -c "cd src/"
+      sh -c "npx  sequelize db:seed:all"
+      sh -c "npm install && npm start"
+
+  # Frontend Service
+  fortend_service: 
+    container_name: fortend_service
+    build: 
+      context: ./Fortend
+      dockerfile: Dockerfile
+
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Fortend:/realestate/fortend
+      - fortend_db_vol:/realestate/fortend/node_modules
+    env_file:
+      - environment/.env.fortend
+    command: >
+      sh -c "npm install && npm run dev "

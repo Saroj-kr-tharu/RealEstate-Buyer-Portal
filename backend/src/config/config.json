@@ -5,7 +5,7 @@
     "database": "RealStateDB",
     "port": 5432,
     "dialect": "postgres",
-    "host": "127.0.0.1",
+    "host": "postgres_db",
     "logging": false
   },
   "test": {

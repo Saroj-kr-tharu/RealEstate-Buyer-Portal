@@ -2,7 +2,7 @@
 FROM node:20-alpine
 
 #Working Directory Define 
-WORKDIR /Ecommerce/Backend/authservice
+WORKDIR /realestate/backend
 
 
 # Copy the package to install 
