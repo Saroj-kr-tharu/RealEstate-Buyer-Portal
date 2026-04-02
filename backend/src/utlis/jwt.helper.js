@@ -7,7 +7,7 @@ const AppError = require("./Errors/AppErrors")
 class JWT {
 
   createToken = asyncHandler( 
-    async(data, time= '10m') => {
+    async(data, time= '50m') => {
      const token = await jwt.sign({ data }, PRIVATEJWT, {
         expiresIn: time, 
       });
