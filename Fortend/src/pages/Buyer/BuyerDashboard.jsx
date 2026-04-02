@@ -9,11 +9,18 @@ import { useDispatch, useSelector } from "react-redux";
 import ItemCard from "../../components/itemCard/ItemCard";
 import Layout from "../../layout/Layout";
 import { FavoriteGetAll, RemovedFavorite } from "../../redux/Slices/favoriteSlice";
-const stats = [
+
+
+function Homepage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useDispatch();
+  const propertiesList = useSelector((state) => state.favorite.PropertyList);
+
+  const stats = [
   {
     id: 1,
     label: "Favorited Items",
-    value: "12",
+    value: propertiesList.length,
     icon: HiOutlineHeart,
     color: "text-blue-400",
     bgColor: "bg-blue-500/10",
@@ -38,11 +45,6 @@ const stats = [
     border: "border-purple-500/20",
   },
 ];
-
-function Homepage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const dispatch = useDispatch();
-  const propertiesList = useSelector((state) => state.favorite.PropertyList);
 
   function loadProperty() {
     dispatch(FavoriteGetAll());

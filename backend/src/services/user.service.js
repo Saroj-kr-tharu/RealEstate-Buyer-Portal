@@ -28,7 +28,7 @@ class userService extends CurdService {
 
             const {password, email} = data;
             const infoUser = await USER_REPO.getByEmail(email);
-           
+            // console.log("info => ", infoUser)
             const hashpassword = infoUser?.dataValues?.password
 
             if(!hashpassword) 

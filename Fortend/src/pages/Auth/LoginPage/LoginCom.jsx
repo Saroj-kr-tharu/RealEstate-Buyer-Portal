@@ -46,9 +46,14 @@ function LoginCom() {
 
       resetForm();
       const response = await dispatch(login(formData));
+      console.log("response => ", response?.payload?.data?.data?.role)
      if(response?.payload?.data){
+          if(response?.payload?.data?.data?.role ==='AGENT')
+            navigate("/agentDashboard")
+          else
             navigate('/buyerDashboard');
-            resetForm();
+
+          resetForm();
         }
   };
 
