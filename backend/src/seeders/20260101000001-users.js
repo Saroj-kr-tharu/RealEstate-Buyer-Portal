@@ -8,28 +8,7 @@ module.exports = {
     const refreshToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImVtYWlsIjoiajFAZ21haWwuY29tIiwiaWQiOiI0ZGQyODNhMS05ZDZlLTQyYmItYTY0ZS1jMzdlN2UyNjY5OTEifSwiaWF0IjoxNzc1MDYyMDU3LCJleHAiOjE3NzU2NjY4NTd9.kfY8iYy3Oh03KIjlaCnmHhvjyVVM6u5o65Hr7WrbVj8';
 
     await queryInterface.bulkInsert('Users', [
-      {
-        id: '96108474-dfe3-4636-862d-2f453935ea41',
-        email: 'JohnbBuyer@gmail.com',
-        username: 'John',
-        password: hashedPassword,
-        refreshToken: refreshToken,
-        role: 'BUYER',
-        isActive: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: 'a1b2c3d4-e5f6-4789-a012-3456789abcde',
-        email: 'SaritaBuyer@gmail.com',
-        username: 'Sarita',
-        password: hashedPassword,
-        refreshToken: refreshToken,
-        role: 'BUYER',
-        isActive: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
+      
       {
         id: 'b2c3d4e5-f6a7-4890-b123-456789abcdef',
         email: 'mahesh@gmail.com',
@@ -52,6 +31,28 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       },
+      {
+        id: '876461ce-dd71-4e96-bf24-bb96f650e6f8',
+        email: 'anush@gmail.com',
+        username: 'anush',
+        password: hashedPassword,
+        refreshToken: refreshToken, 
+        role: 'BUYER',
+        isActive: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: '265c5d4e-9e4e-4395-9afb-a7694e14f02a',
+        email: 'prakash@gmail.com',
+        username: 'prakash',
+        password: hashedPassword,
+        refreshToken: refreshToken,
+        role: 'BUYER',
+        isActive: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
     ], { 
       ignoreDuplicates: true 
     });
@@ -61,10 +62,10 @@ module.exports = {
     await queryInterface.bulkDelete('Users', {
       email: {
         [Sequelize.Op.in]: [
-          'JohnbBuyer@gmail.com',
-          'SaritaBuyer@gmail.com',
           'mahesh@gmail.com',
-          'roshan@gmail.com'
+          'roshan@gmail.com',
+          'anush@gmail.com',
+          'prakash@gmail.com',
         ]
       }
     }, {});

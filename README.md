@@ -79,8 +79,8 @@ All demo accounts use the password: **`Test@1234`**
 
 | Role  | Email                    | Username |
 | ----- | ------------------------ | -------- |
-| Buyer | JohnbBuyer@gmail.com     | John     |
-| Buyer | SaritaBuyer@gmail.com    | Sarita   |
+| Buyer | anush@gmail.com          | Anush    |
+| Buyer | prakash@gmail.com        | Prakash   |
 | Agent | mahesh@gmail.com         | manesh   |
 | Agent | roshan@gmail.com         | roshan   |
 
