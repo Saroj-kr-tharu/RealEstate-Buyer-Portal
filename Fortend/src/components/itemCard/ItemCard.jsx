@@ -1,4 +1,4 @@
-import { FiHeart } from 'react-icons/fi';
+import { FiEdit, FiEye, FiHeart, FiTrash2 } from 'react-icons/fi';
 
 
 export default function ItemCard({ item, onFn, from="homedd" }) {
@@ -23,19 +23,33 @@ return (
         </p>
 
         {/* Actions */}
-        <div className="card-actions justify-between mt-3">
-          <button
-            className="btn btn-outline btn-sm" onClick={() => onFn("view",item)} >
-            View
-          </button>
 
-          <button
-            className="btn btn-primary btn-sm" onClick={() => onFn(from == "home" ? "like" : "dislike", item)}>
-            <FiHeart />
-          </button>
-          <button className="btn btn-primary btn-sm " onClick={() => onFn("buy",item)} >
-            Buy Now
-          </button>
+         <div className="card-actions justify-between mt-3">
+          {from === "agent" ? (
+            <>
+              <button className="btn btn-outline btn-sm" onClick={() => onFn("view", item)}>
+                <FiEye /> View
+              </button>
+              <button className="btn btn-warning btn-sm" onClick={() => onFn("update", item)}>
+                <FiEdit /> Update
+              </button>
+              <button className="btn btn-error btn-sm" onClick={() => onFn("delete", item)}>
+                <FiTrash2 /> Delete
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="btn btn-outline btn-sm" onClick={() => onFn("view", item)}>
+                <FiEye /> View
+              </button>
+              <button className="btn btn-outline btn-sm" onClick={() => onFn("like", item)}>
+                <FiHeart /> Like
+              </button>
+              <button className="btn btn-primary btn-sm" onClick={() => onFn(from == "home" ? "like" : "dislike", item)}>
+                Buy Now
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
