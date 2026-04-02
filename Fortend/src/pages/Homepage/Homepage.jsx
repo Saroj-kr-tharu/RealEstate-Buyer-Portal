@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { FiHome, FiMapPin, FiSearch, FiTrendingUp } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import ItemCard from "../../components/itemCard/ItemCard";
 import Layout from "../../layout/Layout";
 import { AddedToFavorite, RemovedFavorite } from "../../redux/Slices/favoriteSlice";
 import { PropertyGetAll } from "../../redux/Slices/propertySlice";
  
 
-
+import { toast } from "react-hot-toast";
 
 const stats = [
   { icon: <FiHome size={22} />, value: "1,200+", label: "Properties Listed" },
@@ -17,6 +18,7 @@ const stats = [
 
 function Homepage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const propertiesList = useSelector((state) => state.property.PropertyList);
 
@@ -26,7 +28,18 @@ function Homepage() {
 
   useEffect( ()=> { loadProperty() }, [] )
 
+  function checkUserLoggedIn() {
+    const isLoggedIn = localStorage.getItem("isLoggedIn"); 
+    if (!isLoggedIn) {
+      toast.error("Please Logined")
+      navigate("/login"); 
+      return false;
+    }
+    return true;
+  }
+
   const handleAction = (action, item) => {
+    if (!checkUserLoggedIn()) return;
     switch (action) {
       case "view":
         alert(`Viewing: ${item.title}`); break;
