@@ -15,7 +15,7 @@ class FavoriteRepo extends CURD_REPO {
         include: [
         {
           model: Property, 
-          attributes: ['title', 'price', 'location', 'imageUrl', 'description']
+          attributes: ['id','title', 'price', 'location', 'imageUrl', 'description']
         },
         {
           model: User, 

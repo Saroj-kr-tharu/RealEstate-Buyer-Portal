@@ -8,6 +8,7 @@ class ProController {
         async (req,res) => {
             const data = req?.body;
             const token = req?.headers['x-access-token'];
+            console.log("data => ", data , token)
             const response = await proService.addProperty(data, token);
             return responseHandler.success(res, response, "Successfully Created Property", SucessCode.CREATED)
         } 
