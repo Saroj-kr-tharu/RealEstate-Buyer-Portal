@@ -1,7 +1,7 @@
 import { FiHeart } from 'react-icons/fi';
 
 
-export default function ItemCard({ item, onFn }) {
+export default function ItemCard({ item, onFn, from="homedd" }) {
 return (
     <div className="card bg-base-100 w-80 shadow-md hover:shadow-xl transition duration-300">
       
@@ -25,15 +25,15 @@ return (
         {/* Actions */}
         <div className="card-actions justify-between mt-3">
           <button
-            className="btn btn-outline btn-sm" onClick={() => onFn(item)} >
+            className="btn btn-outline btn-sm" onClick={() => onFn("view",item)} >
             View
           </button>
 
           <button
-            className="btn btn-primary btn-sm" onClick={() => onFn(item)}>
+            className="btn btn-primary btn-sm" onClick={() => onFn(from == "home" ? "like" : "dislike", item)}>
             <FiHeart />
           </button>
-          <button className="btn btn-primary btn-sm">
+          <button className="btn btn-primary btn-sm " onClick={() => onFn("buy",item)} >
             Buy Now
           </button>
         </div>

@@ -5,7 +5,8 @@ import axiosIntance from '../../Config/axiosInstance';
 
 
 const initialState= {
-    PropertyList: []
+    PropertyList: [],
+    AgentPropertyList:[]
 
 };
 
@@ -46,10 +47,33 @@ export const PropertyGetById = createAsyncThunk('Property/getById', async(data) 
         }
 })
 
+export const PropertyGetAllByAgent = createAsyncThunk('Property/getallAgent', async() => {
+        try {
+            const response = axiosIntance.get(`/propertyAgent`,  {
+                            headers: {
+                                'x-access-token': localStorage.getItem('token')
+                            }
+                        });
+            
+            toast.promise(response, {
+                loading: 'Loading Property...',
+                success: 'Sucessfully Loaded Property',
+                error: 'Failed to Load Property '
+            }) 
+            const result = await response;
+            return result;
+          
+        } catch (error) {
+            console.log(error);
+            toast.error(error?.response?.data?.err || error?.response?.data?.message || ' Failed');
+           
+        }
+})
 
 
 
-const BookingSlice = createSlice({
+
+const PropertySlice = createSlice({
     name: 'PropertySlicer',
      initialState,
     extraReducers: (builder) => { 
@@ -58,9 +82,7 @@ const BookingSlice = createSlice({
                 if(action?.payload?.data){
                     const data = action?.payload?.data?.data; 
                     state.PropertyList = data;
-                    console.log("data => ", data )
-                    
-                     
+                    // console.log("data => ", data )
                 }
             })
 
@@ -72,6 +94,13 @@ const BookingSlice = createSlice({
                 }
             })
             
+            .addCase(PropertyGetAllByAgent.fulfilled, (state,action) => {
+                if(action?.payload?.data){
+                    const data = action?.payload?.data?.data; 
+                    console.log("data => ", data)
+                    state.AgentPropertyList = data ; 
+                }
+            })
 
         }
 
@@ -79,4 +108,4 @@ const BookingSlice = createSlice({
 });
 
 
-export default BookingSlice.reducer;
+export default PropertySlice.reducer;

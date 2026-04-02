@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 
 
 import About from "../pages/About/About";
-import Agent from "../pages/Agent/Agent";
+import AgentDashboard from "../pages/Agent/AgentDashboard";
 import LoginCom from "../pages/Auth/LoginPage/LoginCom";
 import RegisterCom from "../pages/Auth/RegisterPage/RegisterCom";
 import BuyerDashboard from "../pages/Buyer/BuyerDashboard";
@@ -17,11 +17,11 @@ function MainRoutes() {
     <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="Agent" element={<Agent />} />
       <Route path="About" element={<About />} />
       <Route path="Login" element={<LoginCom />} />
       <Route path="Signup" element={<RegisterCom />} />
 
+       <Route path="/Agent" element={ <ProtectedRoute requiredRole="AGENT"> < AgentDashboard/> </ProtectedRoute>} />
        <Route path="/buyerDashboard" element={ <ProtectedRoute requiredRole="BUYER"> < BuyerDashboard/> </ProtectedRoute>} />
 
       </Routes>

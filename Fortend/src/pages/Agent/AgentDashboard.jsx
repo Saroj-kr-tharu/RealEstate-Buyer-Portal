@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import ItemCard from "../../components/itemCard/ItemCard";
 import Layout from "../../layout/Layout";
-import { FavoriteGetAll, RemovedFavorite } from "../../redux/Slices/favoriteSlice";
+import { PropertyGetAllByAgent } from "../../redux/Slices/propertySlice";
 const stats = [
   {
     id: 1,
@@ -42,10 +42,10 @@ const stats = [
 function Homepage() {
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
-  const propertiesList = useSelector((state) => state.favorite.PropertyList);
+  const propertiesList = useSelector((state) => state.property.AgentPropertyList);
 
   function loadProperty() {
-    dispatch(FavoriteGetAll());
+    dispatch(PropertyGetAllByAgent());
   }
 
   useEffect(() => {
@@ -59,7 +59,6 @@ function Homepage() {
         
         case "dislike":
          console.log("item => ", item)
-          dispatch(RemovedFavorite(item.id)); 
           break;
         case "buy":
           alert(`Buying: ${item.title}`); break;
@@ -68,8 +67,8 @@ function Homepage() {
 
   const filtered = propertiesList.filter(
     (p) =>
-      p.Property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.Property.location.toLowerCase().includes(searchQuery.toLowerCase())
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -80,7 +79,7 @@ function Homepage() {
           Welcome back
         </p>
         <h1 className="text-3xl font-bold text-white leading-tight">
-          Buyer Dashboard
+          Agent Dashboard
         </h1>
         <p className="text-slate-400 mt-1.5 text-sm">
           Track your saved nests and activity.
@@ -169,7 +168,7 @@ function Homepage() {
               {filtered.map((property) => (
                 <ItemCard
                   key={property.id}
-                  item={property.Property}
+                  item={property}
                   onFn={handleAction}
                 />
               ))}

@@ -52,15 +52,15 @@ export const AddedToFavorite = createAsyncThunk('Favorite/added', async(id) => {
             toast.error(error?.response?.data?.err || error?.response?.data?.message || '  Failed');
            
         }
-})
+}) 
 
 export const RemovedFavorite = createAsyncThunk('Favorite/remvoed', async(id) => {
         try {
-            const response = axiosIntance.delete(`/favorite/${id}`, {}, {
+            const response = axiosIntance.delete(`/favorite/${id}`,  {
                 headers: {
                     'x-access-token': localStorage.getItem('token')
                 }
-            });;
+            });
             toast.promise(response, {
                 loading: 'Removing  From Favorite...',
                 success: 'Sucessfully Removed  From Favorite',
@@ -95,14 +95,14 @@ const FavoriteSlice = createSlice({
             .addCase(AddedToFavorite.fulfilled, (state,action) => {
                 if(action?.payload?.data){
                     const data = action?.payload?.data?.data; 
-                    console.log("data => ", data)
+                    // console.log("data => ", data)
                 }
             })
             
             .addCase(RemovedFavorite.fulfilled, (state,action) => {
                 if(action?.payload?.data){
                     const data = action?.payload?.data?.data; 
-                    console.log("data => ", data)
+                    // console.log("data => ", state.)
                 }
             })
 

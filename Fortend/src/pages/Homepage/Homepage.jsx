@@ -3,6 +3,7 @@ import { FiHome, FiMapPin, FiSearch, FiTrendingUp } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import ItemCard from "../../components/itemCard/ItemCard";
 import Layout from "../../layout/Layout";
+import { AddedToFavorite, RemovedFavorite } from "../../redux/Slices/favoriteSlice";
 import { PropertyGetAll } from "../../redux/Slices/propertySlice";
  
 
@@ -102,11 +103,23 @@ function Homepage() {
       dispatch(PropertyGetAll()); 
     }
 
-    useEffect( ()=> { loadProperty() }, [] )
+  useEffect( ()=> { loadProperty() }, [] )
 
-  const handleView = (item) => {
-    alert(`Viewing: ${item.title}`);
-  };
+  const handleAction = (action, item) => {
+    switch (action) {
+      case "view":
+        alert(`Viewing: ${item.title}`); break;
+      case "like":
+        dispatch(AddedToFavorite(item.id));
+        break;
+      case "dislike":
+        dispatch(RemovedFavorite(item.id)); 
+        break;
+      case "buy":
+        alert(`Buying: ${item.title}`); break;
+    }
+}
+  
 
   const filtered = propertiesList.filter(
     (p) =>
@@ -191,7 +204,7 @@ function Homepage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((property) => (
-                <ItemCard key={property.id} item={property} onFn={handleView} />
+                <ItemCard key={property.id} item={property} onFn={handleAction} from="home"/>
               ))}
             </div>
           )}
