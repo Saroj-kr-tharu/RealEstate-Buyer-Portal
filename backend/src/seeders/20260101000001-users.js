@@ -1,5 +1,6 @@
 'use strict';
 
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -41,7 +42,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
-        id: 'b2c3d4e5-f6a7-4890-b123-456789abcdgh',
+        id: '6a604986-52e5-4104-a266-04f27081cdce',
         email: 'roshan@gmail.com',
         username: 'roshan',
         password: hashedPassword,
@@ -60,9 +61,10 @@ module.exports = {
     await queryInterface.bulkDelete('Users', {
       email: {
         [Sequelize.Op.in]: [
-          'a@example.com',
-          'c1@gmail.com',
-          'c2@gmail.com',
+          'JohnbBuyer@gmail.com',
+          'SaritaBuyer@gmail.com',
+          'mahesh@gmail.com',
+          'roshan@gmail.com'
         ]
       }
     }, {});

@@ -18,6 +18,7 @@ const serverSetupAndStart = async () => {
     app.use(
   cors({
     origin: function (origin, callback) {
+      // console.log("Incoming Origin:", origin);
       const allowedOrigins = [FORTEND_URL];
      
       if (!origin || allowedOrigins.includes(origin)) {

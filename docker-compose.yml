@@ -46,9 +46,13 @@ services:
       postgres_service:
         condition: service_healthy
     command: >
-      sh -c "cd src/"
-      sh -c "npx  sequelize db:seed:all"
-      sh -c "npm install && npm start"
+       sh -c "npm install &&  
+              cd src/ && 
+              npx sequelize-cli db:create --env development || true  &&
+               npx sequelize db:migrate && 
+                 npx sequelize db:seed --seed 20260101000001-users.js &&
+                 npx sequelize db:seed --seed 20260101000002-demo-properties.js &&
+               npm start"
 
   # Frontend Service
   fortend_service: 
@@ -58,7 +62,7 @@ services:
       dockerfile: Dockerfile
 
     ports:
-      - "5173:5173"
+      - "5180:5173"
     volumes:
       - ./Fortend:/realestate/fortend
       - fortend_db_vol:/realestate/fortend/node_modules
